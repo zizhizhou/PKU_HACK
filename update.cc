@@ -39,10 +39,15 @@ void Game::UpdateGame(void)
                 snake.position.x += snake.speed.x;
                 snake.position.y += snake.speed.y;
                 allowMove = true;
-                fruit.radius*=0.98;
-                snake.radius=snake.radius<8?8:snake.radius*0.99;
-                if(fruit.radius<snake.radius/5){
-                    fruit.active=false;
+                snake.radius = snake.radius < 8 ? 8 : snake.radius * 0.99;
+                for (int i = 0; i < dripNums; i++)
+                {
+                    fruit[i].radius *= 0.98;
+
+                    if (fruit[i].radius < snake.radius / 5)
+                    {
+                        fruit[i].active = false;
+                    }
                 }
             }
 
@@ -63,48 +68,59 @@ void Game::UpdateGame(void)
             } */
 
             //Fruit position calculation
-            if (!fruit.active)
-            {
-                fruit.active = true;
-                fruit.position = (Vector2){
-                    GetRandomValue(0, (screenWidth / SQUARE_SIZE) - 1) * SQUARE_SIZE + offset.x / 2,
-                    GetRandomValue(0, (screenHeight / SQUARE_SIZE) - 1) * SQUARE_SIZE + offset.y / 2};
-                fruit.radius = GetRandomValue(snake.radius / 2, snake.radius * 2);
 
-                while ((fruit.position.x == snake.position.x) &&
-                       (fruit.position.y == snake.position.y))
+            int temp_num = GetRandomValue(0, 10);
+            dripNums = dripNums < temp_num ? temp_num : dripNums;
+            for (int i = 0; i < dripNums; i++)
+            {
+                if (!fruit[i].active)
                 {
-                    fruit.position = (Vector2){
+
+                    fruit[i].active = true;
+                    fruit[i].position = (Vector2){
                         GetRandomValue(0, (screenWidth / SQUARE_SIZE) - 1) * SQUARE_SIZE + offset.x / 2,
                         GetRandomValue(0, (screenHeight / SQUARE_SIZE) - 1) * SQUARE_SIZE + offset.y / 2};
+                    fruit[i].radius = GetRandomValue(snake.radius / 2, snake.radius * 2);
+
+                    while ((fruit[i].position.x == snake.position.x) &&
+                           (fruit[i].position.y == snake.position.y))
+                    {
+                        fruit[i].position = (Vector2){
+                            GetRandomValue(0, (screenWidth / SQUARE_SIZE) - 1) * SQUARE_SIZE + offset.x / 2,
+                            GetRandomValue(0, (screenHeight / SQUARE_SIZE) - 1) * SQUARE_SIZE + offset.y / 2};
+                    }
                 }
             }
-
         }
 
         //Collision
-        if ((snake.position.x < (fruit.position.x + fruit.radius) &&
-             (snake.position.x + snake.radius) > fruit.position.x) &&
-            (snake.position.y < (fruit.position.y + fruit.radius) &&
-             (snake.position.y + snake.radius) > fruit.position.y))
+        for (int i = 0; i < dripNums; i++)
         {
-            if(snake.radius>fruit.radius){
-                snake.radius = sqrt(pow(snake.radius, 2) + pow(fruit.radius, 2));
-                fruit.active = false;
-            }
-            else{
-                float old_snake_size=pow(snake.radius,2);
-                
-                snake.radius = sqrt(pow(snake.radius,2)-pow(snake.radius,4)/pow(fruit.radius,2));
-                fruit.radius=sqrt(pow(fruit.radius,2)+sqrt(old_snake_size-pow(snake.radius,2)));
-            }
-            //snake[counterTail].position = snakePosition[counterTail - 1];
-            //counterTail += 1;
-            
-        }
+            if ((snake.position.x < (fruit[i].position.x + fruit[i].radius) &&
+                 (snake.position.x + snake.radius) > fruit[i].position.x) &&
+                (snake.position.y < (fruit[i].position.y + fruit[i].radius) &&
+                 (snake.position.y + snake.radius) > fruit[i].position.y))
+            {
+                if (snake.radius > fruit[i].radius)
+                {
+                    snake.radius = sqrt(pow(snake.radius, 2) + pow(fruit[i].radius, 2));
+                    fruit[i].active = false;
+                }
+                else
+                {
+                    float old_snake_size = pow(snake.radius, 2);
 
+                    snake.radius = sqrt(pow(snake.radius, 2) - pow(snake.radius, 4) / pow(fruit[i].radius, 2));
+                    fruit[i].radius = sqrt(pow(fruit[i].radius, 2) + sqrt(old_snake_size - pow(snake.radius, 2)));
+                }
+                //snake[counterTail].position = snakePosition[counterTail - 1];
+                //counterTail += 1;
+            }
+        }
         framesCounter++;
     }
+
+    
 
     else
     {

@@ -6,7 +6,7 @@
 #if defined(PLATFORM_WEB)
     #include <emscripten/emscripten.h>
 #endif
-
+#define DRIP_MAX_NUMS  256
 #define SNAKE_LENGTH   256
 #define SQUARE_SIZE     31
 
@@ -36,6 +36,7 @@ public:
     int framesCounter;
     bool gameOver;
     bool pause;
+    int dripNums;
 
     Food fruit[SNAKE_LENGTH];
     Snake snake;

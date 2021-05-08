@@ -28,7 +28,10 @@ void Game::DrawGame(void)
             DrawCircleV(snake.position, snake.radius, snake.color);
 
         //Draw fruit to pick
-        DrawCircleV(fruit.position, fruit.radius, fruit.color);
+        for(int i=0;i<DRIP_MAX_NUMS;i++){
+            if(fruit[i].active)
+                DrawCircleV(fruit[i].position, fruit[i].radius, fruit[i].color);
+        }
 
         if (pause) 
         {
