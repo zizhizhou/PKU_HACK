@@ -82,8 +82,7 @@ void Game::UpdateGame(void)
                         GetRandomValue(0, (screenHeight / SQUARE_SIZE) - 1) * SQUARE_SIZE + offset.y / 2};
                     fruit[i].radius = GetRandomValue(snake.radius / 2, snake.radius * 2);
 
-                    while ((fruit[i].position.x == snake.position.x) &&
-                           (fruit[i].position.y == snake.position.y))
+                    while (CheckCollisionCircles(fruit[i].position, 2*fruit[i].radius, snake.position, snake.radius))
                     {
                         fruit[i].position = (Vector2){
                             GetRandomValue(0, (screenWidth / SQUARE_SIZE) - 1) * SQUARE_SIZE + offset.x / 2,
@@ -96,10 +95,7 @@ void Game::UpdateGame(void)
         //Collision
         for (int i = 0; i < dripNums; i++)
         {
-            if ((snake.position.x < (fruit[i].position.x + fruit[i].radius) &&
-                 (snake.position.x + snake.radius) > fruit[i].position.x) &&
-                (snake.position.y < (fruit[i].position.y + fruit[i].radius) &&
-                 (snake.position.y + snake.radius) > fruit[i].position.y))
+            if (CheckCollisionCircles(fruit[i].position, fruit[i].radius, snake.position, snake.radius))
             {
                 if (snake.radius > fruit[i].radius)
                 {
@@ -116,11 +112,19 @@ void Game::UpdateGame(void)
                 //snake[counterTail].position = snakePosition[counterTail - 1];
                 //counterTail += 1;
             }
+            for (int j = 0; j < dripNums; j++)
+            {
+                if (i != j &&
+                    CheckCollisionCircles(fruit[i].position, fruit[i].radius, fruit[j].position, fruit[j].radius))
+                {
+                    fruit[i].radius = sqrt(pow(fruit[i].radius, 2) + pow(fruit[j].radius, 2));
+                    fruit[j].active = false;
+
+                }
+            }
         }
         framesCounter++;
     }
-
-    
 
     else
     {
