@@ -11,6 +11,7 @@ void Game::InitGame(void)
     gameOver = false;
     pause = false;
     dripNums = 0;
+    buffNums=0;
     //fruit = Food{ 0 };
     //snake[0] = { 0 };
     snakePosition = {0};
@@ -21,7 +22,7 @@ void Game::InitGame(void)
     //camera = {0};
 
     counterTail = 1;
-    allowMove = false;
+    allowMove = true;
 
     offset.x = screenWidth % SQUARE_SIZE;
     offset.y = screenHeight % SQUARE_SIZE;
@@ -30,7 +31,7 @@ void Game::InitGame(void)
     snake.size = (Vector2){SQUARE_SIZE, SQUARE_SIZE};
     snake.radius = 10.0f;
     snake.speed = (Vector2){SQUARE_SIZE, 0};
-
+    snake.buff=Normal;
     snake.color = DARKBLUE;
 
     snakePosition = (Vector2){0.0f, 0.0f};
@@ -41,6 +42,15 @@ void Game::InitGame(void)
         fruit[i].color = SKYBLUE;
         fruit[i].active = false;
         fruit[i].radius = 10.0f;
+    }
+    for (int i = 0; i < BUFF_MAX_NUMS; i++)
+    {
+        buff[i].species=Dirt;
+        buff[i].rec.height=SQUARE_SIZE;
+        buff[i].rec.width=SQUARE_SIZE;
+        buff[i].color = BLACK;
+        buff[i].active = false;
+        buff[i].radius = 10.0f;
     }
 
     camera.position = (Vector3){0.0f, 10.0f, 10.0f};
