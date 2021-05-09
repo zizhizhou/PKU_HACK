@@ -11,31 +11,32 @@
 #define SNAKE_LENGTH   256
 #define SQUARE_SIZE     31
 enum Obstacle{Normal,Dirt,Insect};
-typedef struct Snake {//
+typedef struct Drip {//
     Vector3 position;
     Vector2 size;
-    Vector2 speed;
+    Vector3 speed;
     Color color;
     Obstacle buff;
     int buffTime;
     float radius;
-} Snake;
+} Drip;
 
-typedef struct Food {
-    Vector2 position;
+typedef struct Water {
+    Vector3 position;
     Vector2 size;
     bool active;
     Color color;
     float radius;
-} Food;
+} Water;
 
 typedef struct Buff{
+    Vector3 position;
     Obstacle species;
     Rectangle rec;
     bool active;
     Color color;
     float radius;
-} Bff;
+} Buff;
 
 class Game {
 public:
@@ -48,9 +49,9 @@ public:
     int dripNums;
     int buffNums;
 
-    Food fruit[DRIP_MAX_NUMS];
+    Water water[DRIP_MAX_NUMS];
     Buff buff[BUFF_MAX_NUMS];
-    Snake snake;
+    Drip drip;
     Vector3 snakePosition;
     bool allowMove;
     Vector2 offset;
