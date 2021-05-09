@@ -9,34 +9,35 @@ void Game::DrawGame(void)
     if (!gameOver)
     {
         //Draw grid lines
-
-
-
-            //DrawCircleV(snake.position, snake.radius, snake.color);
+        Vector2 p1 = {10+screenWidth/2, 1};
+        Vector2 p2 = {-10+screenWidth/2, screenHeight-1};
+        Vector2 p3 = {1,screenHeight/2};
+        Vector2 p4 = { screenWidth-1,screenHeight/2};
+        DrawLineV(p1, p2, LIGHTGRAY);
+        DrawLineV(p3, p4, LIGHTGRAY);
+        //DrawCircleV(snake.position, snake.radius, snake.color);
 
         //Draw fruit to pick
-        for(int i=0;i<dripNums;i++){
-            if(fruit[i].active)
-                DrawCircleV(fruit[i].position, fruit[i].radius, fruit[i].color);
-        }
-        for(int i=0;i<buffNums;i++){
-            if(buff[i].active)
-                DrawRectangleRec(buff[i].rec,buff[i].color);
-        }
 
-        if (pause) 
+        // for (int i = 0; i < buffNums; i++)
+        // {
+        //     if (buff[i].active)
+        //         DrawRectangleRec(buff[i].rec, buff[i].color);
+        // }
+
+        if (pause)
         {
             char msgPause[128] = "GAME PAUSED";
-            float x = screenWidth/2 - MeasureText(msgPause, 40)/2;
-            float y = screenHeight/2 - 40;
+            float x = screenWidth / 2 - MeasureText(msgPause, 40) / 2;
+            float y = screenHeight / 2 - 40;
             DrawText(msgPause, x, y, 40, GRAY);
         }
     }
     else
     {
         char msgAgain[128] = "PRESS [ENTER] TO PLAY AGAIN";
-        float x = GetScreenWidth()/2 - MeasureText(msgAgain, 20)/2;
-        float y = GetScreenHeight()/2 - 50;
+        float x = GetScreenWidth() / 2 - MeasureText(msgAgain, 20) / 2;
+        float y = GetScreenHeight() / 2 - 50;
         DrawText(msgAgain, x, y, 20, GRAY);
     }
 
@@ -55,11 +56,16 @@ void Game::DrawGame(void)
     //     DrawLine3D(p1, p2, LIGHTGRAY);
     // }
     //Draw snake
-    DrawSphere(snake.position,snake.radius, snake.color);
+    DrawSphere(drip.position, drip.radius, drip.color);
+    for (int i = 0; i < dripNums; i++)
+    {
+        if (water[i].active)
+            DrawSphere(water[i].position, water[i].radius, water[i].color);
+    }
     //DrawCircle3D(snake.position,snake.radius,Vector3{0,1,0},90,snake.color);
     DrawGrid(20, 1.0f);
     //DrawCube((Vector3){-4.0f, 0.0f, 2.0f}, 2.0f, 5.0f, 2.0f, RED);
-    // DrawCubeWires((Vector3){-4.0f, 0.0f, 2.0f}, 2.0f, 5.0f, 2.0f, GOLD);
+    //DrawCube((Vector3){0.0f, 0.0f, 0.0f}, 20.0f, 0.01f, 20.0f, WHITE);
     // DrawCubeWires((Vector3){-4.0f, 0.0f, -2.0f}, 3.0f, 6.0f, 2.0f, MAROON);
     // DrawSphere((Vector3){-1.0f, 0.0f, -2.0f}, 1.0f, GREEN);
     // DrawSphereWires((Vector3){1.0f, 0.0f, 2.0f}, 2.0f, 16, 16, LIME);
@@ -72,4 +78,3 @@ void Game::DrawGame(void)
     EndMode3D();
     EndDrawing();
 }
-

@@ -27,21 +27,21 @@ void Game::InitGame(void)
     offset.x = screenWidth % SQUARE_SIZE;
     offset.y = screenHeight % SQUARE_SIZE;
 
-    snake.position = Vector3{0, 0,0};
-    snake.size = (Vector2){SQUARE_SIZE, SQUARE_SIZE};
-    snake.radius = 2;
-    snake.speed = (Vector2){SQUARE_SIZE, 0};
-    snake.buff=Normal;
-    snake.color = DARKBLUE;
+    drip.position = Vector3{0, 0,0};
+    drip.size = (Vector2){SQUARE_SIZE, SQUARE_SIZE};
+    drip.radius = 0.5;
+    drip.speed = (Vector3){0, 0,0};
+    drip.buff=Normal;
+    drip.color = DARKBLUE;
 
     snakePosition = (Vector3){0.0f, 0.0f,0.0f};
 
     for (int i = 0; i < DRIP_MAX_NUMS; i++)
     {
-        fruit[i].size = (Vector2){SQUARE_SIZE, SQUARE_SIZE};
-        fruit[i].color = SKYBLUE;
-        fruit[i].active = false;
-        fruit[i].radius = 10.0f;
+        water[i].size = (Vector2){SQUARE_SIZE, SQUARE_SIZE};
+        water[i].color = SKYBLUE;
+        water[i].active = false;
+        water[i].radius = 10.0f;
     }
     for (int i = 0; i < BUFF_MAX_NUMS; i++)
     {
@@ -52,7 +52,7 @@ void Game::InitGame(void)
         buff[i].active = false;
         buff[i].radius = 10.0f;
     }
-    camera->position = (Vector3){ 0.0f, 20.0f, 0.0f };
+    camera->position = (Vector3){ 20.0f, 14.0f, 0.0f };
     camera->target = (Vector3){ 0.0f, 0.0f, 0.0f };
     camera->up = (Vector3){ -1.0f, 0.0f, 0.0f };
     camera->fovy = 45.0f;
