@@ -4,7 +4,8 @@ int
 main(void)
 {
     Game *g = new Game();
-    InitWindow(g->screenWidth, g->screenHeight, "sample game: snake");
+    InitWindow(g->screenWidth, g->screenHeight, "RAIN --THE GAME (Test Vision)");
+    InitAudioDevice(); //Initialize Audio
     g->InitGame();
 
 #if defined(PLATFORM_WEB)
@@ -24,7 +25,8 @@ main(void)
     }
 
 #endif
-
+    //Close Audio
+    CloseAudioDevice();
     //Close window and OpenGL context
     CloseWindow();
 
