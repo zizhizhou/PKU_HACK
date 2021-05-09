@@ -7,6 +7,7 @@ Game::Game()
 //Initialize game variables
 void Game::InitGame(void)
 {
+    SetWindowSize(screenWidth,screenHeight);
     framesCounter = 0;
     gameOver = false;
     pause = false;
@@ -29,19 +30,22 @@ void Game::InitGame(void)
     acc_rate = 1;
 
     for (int i = 0; i < RAIN_NUM; i++)
-    {
-        rain[i].size = SQUARE_SIZE * 3 * double(GetRandomValue(1,10))/double(10) ;
-        rain[i].speed = (Vector2){ 0, double(GetRandomValue(0,10))/double(10) * SQUARE_SIZE * 2};
-        rain[i].position = (Vector2){GetRandomValue(0, (screenWidth/SQUARE_SIZE) - 1)*SQUARE_SIZE + offset.x/2,  -20};
-        rain[i].color = RED;
+    {   
+        Rain temp = {
+            .position = (Vector2){GetRandomValue(0, (screenWidth/SQUARE_SIZE) - 1)*SQUARE_SIZE + offset.x/2,  -20},
+            .radius = (BASIC_SIZE) * double(GetRandomValue(2,10))/double(10),
+            .speed = (Vector2){ 0, double(GetRandomValue(2,10))/double(10) * BASIC_SPEED * 2},
+            .color = rain_color,
+            .active = false
+        };
+        rain.push_back(temp);
     }
-    //camera = {0};
 
-    counterTail = 1;
-    allowMove = true;
 
-    offset.x = screenWidth % SQUARE_SIZE;
-    offset.y = screenHeight % SQUARE_SIZE;
+
+
+    offset.x = MaxWidth % SQUARE_SIZE;
+    offset.y = MaxHeight % SQUARE_SIZE;
 
     snake.position = (Vector2){screenWidth / 2, screenHeight  / 2};
     snake.size = (Vector2){SQUARE_SIZE, SQUARE_SIZE};
@@ -55,24 +59,30 @@ void Game::InitGame(void)
 
     for (int i = 0; i < DRIP_MAX_NUMS; i++)
     {
-        fruit[i].size = (Vector2){SQUARE_SIZE, SQUARE_SIZE};
-        fruit[i].color = SKYBLUE;
-        fruit[i].active = false;
-        fruit[i].radius = 10.0f;
+        Food temp = {
+            .size = (Vector2){SQUARE_SIZE, SQUARE_SIZE},
+            .active = false,
+            .color = SKYBLUE,
+            .radius = 10.0f
+        };
+        fruit.push_back(temp);
     }
+    Rectangle rec_temp{.x = 0, .y = 0, .width = SQUARE_SIZE, .height = SQUARE_SIZE};
     for (int i = 0; i < BUFF_MAX_NUMS; i++)
-    {
-        buff[i].species=Dirt;
-        buff[i].rec.height=SQUARE_SIZE;
-        buff[i].rec.width=SQUARE_SIZE;
-        buff[i].color = BLACK;
-        buff[i].active = false;
-        buff[i].radius = 10.0f;
+    {   
+        Buff temp = {
+            .species=Dirt,
+            .rec = rec_temp,
+            .active = false,
+            .color = BLACK,
+            .radius = 10.0f
+        };
+        buff.push_back(temp);
     }
 
-    camera.position = (Vector3){0.0f, 10.0f, 10.0f};
-    camera.target = (Vector3){1.0f, 0.0f, 0.0f};
-    camera.up = (Vector3){0.0f, 1.0f, 0.0f};
-    camera.fovy = 45.0f;
-    camera.projection = CAMERA_PERSPECTIVE;
+    camera.target = (Vector2){ snake.position.x, snake.position.y  };
+    camera.offset = (Vector2){ screenWidth/2.0f,screenHeight/2.0f };
+    camera.rotation = 0.0f;
+    camera.zoom = 4.0f;
+    updatecamera();
 }

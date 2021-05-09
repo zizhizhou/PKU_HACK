@@ -14,110 +14,101 @@ void Game::DrawGame(void)
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
+    this->cameramove();
+
+
+    BeginMode2D(camera);
+
     if (!gameOver)
     {
         //Draw grid lines
-        for (int i = 0; i < screenWidth/SQUARE_SIZE + 1; i++)
-        {
-            Vector2 p1 = {SQUARE_SIZE*i + offset.x/2, offset.y/2};
-            Vector2 p2 = {SQUARE_SIZE*i + offset.x/2, screenHeight - offset.y/2};
-            DrawLineV(p1, p2, LIGHTGRAY);
-        }
-
-        for (int i = 0; i < screenHeight/SQUARE_SIZE + 1; i++)
-        {
-            Vector2 p1 = {offset.x/2, SQUARE_SIZE*i + offset.y/2};
-            Vector2 p2 = {screenWidth - offset.x/2, SQUARE_SIZE*i + offset.y/2};
-            DrawLineV(p1, p2, LIGHTGRAY);
-        }
-        char text_score[128] = "SCORE=";
-        std::string temp_text = std::to_string(score);
-        for (int i = 0;i < sizeof(temp_text);i++)
-        {
-            text_score[i+6]=temp_text[i];
-        }
-        DrawText(text_score, 10, 10, 40, BLACK);
-
-        if (Weather[0].active && Event_active)
-        {   const char wind_message[128] = "Wind is coming!";
-            DrawText(wind_message, 500, 10, 40, DARKBLUE);
-        }
-        if (Weather[1].active && Event_active)
-        {
-            const char sunny_message[128] = "What a sunny day!";
-            DrawText(sunny_message, 400, 10, 40, RED);
-        }
-
+        drawgrid();
+        
+        
 
         //Draw drops
         drawdrop();
+
+
+        //Draw buffs
+        drawbuff();
+
+        //Draw text
+        drawtext();
         
 
         if (pause) 
         {
-            char msgPause[128] = "GAME PAUSED";
-            float x = screenWidth/2 - MeasureText(msgPause, 40)/2;
-            float y = screenHeight/2 - 40;
-            DrawText(msgPause, x, y, 40, GRAY);
+            DrawText("GAME PAUSED", camera.target.x-MeasureText("GAME PAUSED",40/camera.zoom)/2, camera.target.y-40/camera.zoom, 40/camera.zoom, GRAY);
         }
-        for(int i=0;i<buffNums;i++){
-            if(buff[i].active)
-                DrawRectangleRec(buff[i].rec,buff[i].color);
-        }
-
-        if (pause) 
-        {
-            char msgPause[128] = "GAME PAUSED";
-            float x = screenWidth/2 - MeasureText(msgPause, 40)/2;
-            float y = screenHeight/2 - 40;
-            DrawText(msgPause, x, y, 40, GRAY);
-        }
+        
     }
     else
     {
-        char msgAgain[128] = "PRESS [ENTER] TO PLAY AGAIN";
-        float x = GetScreenWidth()/2 - MeasureText(msgAgain, 20)/2;
-        float y = GetScreenHeight()/2 - 50;
-        DrawText(msgAgain, x, y, 20, GRAY);
+        DrawText("PRESS [ENTER] TO PLAY AGAIN", camera.target.x-MeasureText("PRESS [ENTER] TO PLAY AGAIN",40/camera.zoom)/2, camera.target.y-40/camera.zoom, 40/camera.zoom, GRAY);
     }
 
-
+    EndMode2D();
     EndDrawing();
 }
 
 
 void Game::drawdrop(){
 
-    this->calcedge(snake.position,snake.radius,snake.speed);
-    for(int i=0;i<EDGECOUNT;i++)DrawLineBezierQuad(edges[i],edges[i+1],controls[i],snake.radius/5,snake.color);
-    if(FILLING){
-        DrawCircleV(snake.position,snake.radius,(Color){0,82,172,100});
-        if(keypoint!=-1){
-            if(keypoint==0)DrawTriangle(edges[0],edges[1],edges[EDGECOUNT-1],(Color){0,82,172,100});
-            else DrawTriangle(edges[keypoint],edges[keypoint+1],edges[keypoint-1],(Color){0,82,172,100});
-        }
-    }
 
 
     for(int i=0;i<dripNums;i++){
         if(!fruit[i].active)continue;
+        if(fruit[i].radius<=5)continue;
+        //if(abs(fruit[i].position.x-snake.position.x)>(camera.offset.x/camera.zoom)||abs(fruit[i].position.y-snake.position.y)>(camera.offset.y/camera.zoom))continue;
         this->calcedge(fruit[i].position, fruit[i].radius, (Vector2){0,0});
         for(int j=0;j<EDGECOUNT;j++)DrawLineBezierQuad(edges[j],edges[j+1],controls[j],fruit[i].radius/5,fruit[i].color);
         if(FILLING)DrawCircleV(fruit[i].position,fruit[i].radius,(Color){0,121,241,100});
     }
 
     for (int i = 0; i < RAIN_NUM; i++){
+        if(rain[i].radius<=5)continue;
 
-        this->calcedge(rain[i].position,sqrt(rain[i].size),rain[i].speed);
-        for(int j=0;j<EDGECOUNT;j++)DrawLineBezierQuad(edges[j],edges[j+1],controls[j],sqrt(rain[i].size)/5,rain[i].color);
-        DrawCircleV(rain[i].position,sqrt(rain[i].size),(Color){230,41,55,100});
+        if(abs(rain[i].position.x-snake.position.x)>(camera.offset.x/camera.zoom)||abs(rain[i].position.y-snake.position.y)>(camera.offset.y/camera.zoom))continue;
+
+        this->calcedge(rain[i].position,rain[i].radius,rain[i].speed);
+        
+        DrawCircleV(rain[i].position,rain[i].radius,(Color){230,41,55,100});
         if(FILLING){
             if(keypoint!=-1){
-                if(keypoint==0)DrawTriangle(edges[0],edges[1],edges[EDGECOUNT-1],(Color){230,41,55,100});
-                else DrawTriangle(edges[keypoint],edges[keypoint+1],edges[keypoint-1],(Color){230,41,55,100});
+                if(keypoint==0){
+                    DrawTriangle(edges[0],edges[1],edges[EDGECOUNT-1],WHITE);
+                    DrawTriangle(edges[0],edges[1],edges[EDGECOUNT-1],(Color){230,41,55,100});
+                }
+                else{
+                    DrawTriangle(edges[keypoint],edges[keypoint+1],edges[keypoint-1],WHITE);
+                    DrawTriangle(edges[keypoint],edges[keypoint+1],edges[keypoint-1],(Color){230,41,55,100});
+                } 
             }
         }
+        for(int j=0;j<EDGECOUNT;j++)DrawLineBezierQuad(edges[j],edges[j+1],controls[j],rain[i].radius/5,rain[i].color);
     }
+
+    this->calcedge(snake.position,snake.radius,snake.speed);
+    
+    if(FILLING){
+        DrawCircleV(snake.position,snake.radius,(Color){0,82,172,100});
+        if(keypoint!=-1){
+            if(keypoint==0){
+                DrawTriangle(edges[0],edges[1],edges[EDGECOUNT-1],WHITE);
+                DrawTriangle(edges[0],edges[1],edges[EDGECOUNT-1],(Color){0,82,172,100});
+            }
+            else{
+                DrawTriangle(edges[keypoint],edges[keypoint+1],edges[keypoint-1],WHITE);
+                DrawTriangle(edges[keypoint],edges[keypoint+1],edges[keypoint-1],(Color){0,82,172,100});
+            } 
+        }
+    }
+
+    
+    for(int i=0;i<EDGECOUNT;i++)DrawLineBezierQuad(edges[i],edges[i+1],controls[i],snake.radius/5,snake.color);
+
+
 }
 
 void Game::calcedge(Vector2 center,float radius,Vector2 speed){
@@ -201,7 +192,80 @@ void Game::calcedge(Vector2 center,float radius,Vector2 speed){
     }
 
 
-    
-    
 }
 
+void Game::cameramove(void){
+ 
+    camera.zoom += ((float)GetMouseWheelMove()*0.05f);
+    if(snake.radius>=0.5*SQUARE_SIZE&&camera.zoom>=2.0f)camera.zoom/=1.01f;
+    if(snake.radius>=1.5*SQUARE_SIZE&&camera.zoom>=1.0f)camera.zoom/=1.01f;
+    if(snake.radius<1.5*SQUARE_SIZE&&camera.zoom<=2.0f)camera.zoom*=1.01f;
+    if(snake.radius<0.5*SQUARE_SIZE&&camera.zoom<=4.0f)camera.zoom*=1.01f;
+    
+
+    if (camera.zoom > 3.0f) camera.zoom = 3.0f;
+    else if (camera.zoom < 0.1f) camera.zoom = 0.1f;
+
+    // Camera reset (zoom and rotation)
+    if (IsKeyPressed(KEY_R))
+    {
+        camera.zoom = 0.25f;
+        camera.rotation = 0.0f;
+    }
+
+    if(snake.position.x-camera.offset.x/camera.zoom>=leftx&&snake.position.x+camera.offset.x/camera.zoom<=rightx)camera.target.x=snake.position.x;
+    if(snake.position.y-camera.offset.y/camera.zoom>=topy&&snake.position.y+camera.offset.y/camera.zoom<=bottomy)camera.target.y=snake.position.y;
+}
+
+void Game::drawtext(){
+
+    Vector2 lt=getcameralt();
+    string temp_score = "SCORE="+to_string(score);
+    DrawText(temp_score.c_str(), lt.x, lt.y, 40/camera.zoom, BLACK);
+
+    
+
+    if (Weather[0].active && Event_active)
+    {   
+        DrawText("Wind is coming!", lt.x+camera.offset.x*2/camera.zoom-MeasureText("Wind is coming!",40/camera.zoom)-40/camera.zoom, lt.y, 40/camera.zoom, DARKBLUE);
+    }
+    if (Weather[1].active && Event_active)
+    {
+        DrawText("It's so hot!", lt.x+camera.offset.x*2/camera.zoom-MeasureText("It's so hot!",40/camera.zoom)-40/camera.zoom, lt.y, 40/camera.zoom, RED);
+    }
+    if (Weather[2].active && Event_active)
+    {
+        DrawText("What a sunny day!", lt.x+camera.offset.x*2/camera.zoom-MeasureText("What a sunny day!",40/camera.zoom)-40/camera.zoom, lt.y, 40/camera.zoom, RED);
+    }
+}
+
+Vector2 Game::getcameralt(void){
+    Vector2 lt;
+    lt.x=camera.target.x-camera.offset.x/camera.zoom;
+    lt.y=camera.target.y-camera.offset.y/camera.zoom;
+    return lt;
+}
+
+
+void Game::drawgrid(void){
+    for (int i = 0; i < MaxWidth/SQUARE_SIZE + 1; i++)
+    {
+        Vector2 p1 = {SQUARE_SIZE*i+leftx, topy};
+        Vector2 p2 = {SQUARE_SIZE*i+leftx , bottomy};
+        DrawLineV(p1, p2, LIGHTGRAY);
+    }
+
+    for (int i = 0; i < MaxHeight/SQUARE_SIZE + 1; i++)
+    {
+        Vector2 p1 = {leftx, SQUARE_SIZE*i+topy};
+        Vector2 p2 = {rightx, SQUARE_SIZE*i+topy };
+        DrawLineV(p1, p2, LIGHTGRAY);
+    }
+}
+
+void Game::drawbuff(void){
+    for(int i=0;i<buffNums;i++){
+        if(buff[i].active)
+            DrawRectangleRec(buff[i].rec,buff[i].color);
+    }
+}

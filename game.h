@@ -5,15 +5,14 @@
 #include <math.h>
 #include <string>
 #include <random>
+using namespace std;
 
 #if defined(PLATFORM_WEB)
     #include <emscripten/emscripten.h>
 #endif
-#define DRIP_MAX_NUMS  256
-#define BUFF_MAX_NUMS  256
-#define SNAKE_LENGTH   256
-#define SQUARE_SIZE     31
-#define RAIN_NUM        10
+
+
+
 
 typedef struct Event{
     bool active;
@@ -31,19 +30,19 @@ typedef struct Snake {//
 } Snake;
 
 typedef struct Food {
-    Vector2 position;
     Vector2 size;
     bool active;
     Color color;
     float radius;
+    Vector2 position;
 } Food;
 
 typedef struct Rain {
     Vector2 position;
-    float size;
     float radius;
     Vector2 speed;
     Color color;
+    bool active;
 } Rain;
 
 typedef struct Buff{
@@ -52,17 +51,32 @@ typedef struct Buff{
     bool active;
     Color color;
     float radius;
-} Bff;
+} Buff;
 
 class Game {
 public:
-    static const int screenWidth = 800;
-    static const int screenHeight = 450;
+    static const int screenWidth = 1200;
+    static const int screenHeight = 800;
+    static const int MaxWidth = 4800;
+    static const int MaxHeight = 3200;
+    static const int SQUARE_SIZE = 40;
+
+    static const int leftx = -MaxWidth/2+screenWidth/2;
+    static const int rightx = MaxWidth/2+screenWidth/2;
+    static const int topy = -MaxHeight/2+screenHeight/2;
+    static const int bottomy = MaxHeight/2+screenHeight/2;
+    int cleftx=0;
+    int crightx=0;
+    int ctopy=0;
+    int cbottomy=0;
+    int CameraWidth=0;
+    int CameraHeight=0;
+
 
     static const int EDGECOUNT = 8;
-    static const int G = 5;
-    static const int A = 2;
-    static const int MAXSPEED = 20;
+    static const int G = 1;
+    static const int A = 1;
+    static const int MAXSPEED = 5;
     static const int MINSIZE = 5;
     static const bool FILLING = true;
 
@@ -79,21 +93,40 @@ public:
     int Event_time;
     Event Weather[10];
     int acc_rate;
+    int mark = 0;
     //Num = 0 Wind Probabilty = 0.1
     //Num = 1 Sunny Probability = 0.2
 
-    Food fruit[DRIP_MAX_NUMS];
-    Buff buff[BUFF_MAX_NUMS];
-    Rain rain[RAIN_NUM];
-    Snake snake;
+
     Vector2 snakePosition;
     bool allowMove;
     Vector2 offset;
     int counterTail;
+    
+    int RAIN_NUM = 10;
+    int DRIP_MAX_NUMS = 256;
+    int BUFF_MAX_NUMS = 256;
+
+    int difficult_level = 0;
+    int BASIC_SIZE = 10;
+    int BASIC_SPEED = 20;
+    int diff_rate = 1;
+
+    int mycount=0;
+
+
+
+    vector<Food> fruit;
+    vector<Buff> buff;
+    vector<Rain> rain;
+
+    Snake snake;
+
+
+    Color rain_color = GOLD;
 
     
-
-    Camera camera;
+    Camera2D camera;
 
     Game();
     ~Game();
@@ -107,6 +140,14 @@ public:
     void calcedge(Vector2 center,float radius,Vector2 speed);
     void drawdrop(void);
     void updatesnake(void);
+    void cameramove(void);
+    void drawtext(void);
+    Vector2 getcameralt(void);
+    void drawgrid(void);
+    void drawbuff(void);
+    void init_Rain(void);
+    void init_Fruit(void);
+    void updatecamera(void);
 };
 
 #endif
