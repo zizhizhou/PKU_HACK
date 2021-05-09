@@ -4,7 +4,7 @@ int
 main(void)
 {
     Game *g = new Game();
-    InitWindow(g->screenWidth, g->screenHeight, "sample game: snake");
+    InitWindow(g->screenWidth, g->screenHeight, "RAIN --THE GAME (Test Vision)");
     g->InitGame();
 
 #if defined(PLATFORM_WEB)
