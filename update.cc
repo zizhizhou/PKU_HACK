@@ -9,30 +9,85 @@ void Game::UpdateGame(void)
             pause = !pause;
         if (!pause)
         {
+            int speed = 5;
+            if (snake.buff == Dirt)
+            {
+                snake.buff = Normal;
+                speed = 1;
+                snake.buffTime = 100;
+            }
+            else if (snake.buffTime > 0)
+            {
+                snake.buffTime -= 1;
+                speed = 1;
+            }
             //Player control
+            double camereLenth = 625;
+            Vector3 rule;
             if (IsKeyDown(KEY_RIGHT) && allowMove)
             {
-                snake.position.x += 5;
+                camera->up.z+=0.1;
+                camera->up.y+=0.1;
+                UpdateCamera(camera);
+                // double tmp_rand1 = asin(camera.position.z / 15);
+                // camera.position.z = 15 * sin(tmp_rand1 + 0.01);
+                // camera.position.x = sqrt(camereLenth - pow(camera.position.y, 2)) * cos(tmp_rand1 + 0.01);
+                //snake.position.x += speed;
             }
             if (IsKeyDown(KEY_LEFT) && allowMove)
             {
-                snake.position.x -= 5;
+                 camera->up.z-=0.1;
+                camera->up.y-=0.1;
+                UpdateCamera(camera);
+                // double tmp_rand = atan(camera.position.z / camera.position.x);
+                // camera.position.z = sqrt(camereLenth - pow(camera.position.y, 2)) * sin(tmp_rand - 0.01);
+                // camera.position.x = sqrt(camereLenth - pow(camera.position.y, 2)) * cos(tmp_rand - 0.01);
+                //snake.position.x -= speed;
             }
             if (IsKeyDown(KEY_UP) && allowMove)
             {
-                snake.position.y -= 5;
+                camera->up.x+=0.1;
+                UpdateCamera(camera);
+                //camera->up.z+=0.1;
+                // double tmp_rand = atan(camera->position.y / camera->position.x);
+
+                // camera->position.y = sqrt(camereLenth - pow(camera->position.z, 2)) * sin(tmp_rand - 0.01);
+                // camera->position.x = sqrt(camereLenth - pow(camera->position.z, 2)) * cos(tmp_rand - 0.01);
+                // //snake.position.y -= speed;
+                // rule.x=camera->position.x;
+
             }
             if (IsKeyDown(KEY_DOWN) && allowMove)
             {
-                snake.position.y += 5;
+                camera->up.x-=0.1;
+                UpdateCamera(camera);
+                //camera->up.z-=0.1;
+                // double tmp_rand = atan(camera->position.y / camera->position.x);
+
+                // camera->position.y = sqrt(camereLenth - pow(camera->position.z, 2)) * sin(tmp_rand + 0.01);
+                // camera->position.x = sqrt(camereLenth - pow(camera->position.z, 2)) * cos(tmp_rand + 0.01);
             }
-
+            
             //Snake movement
+            //Wall behaviour
 
+            // if ((snake.position.x) > 10 ||
+            //     (snake.position.z) > 10 ||
+            //     (snake.position.x < -10) || (snake.position.z < -10))
+            // {
+            //     snake.position.y -= 0.5;
+            //     if (snake.position.y < -10)
+            //         gameOver = true;
+            // }
+            // else{
+            //     snake.position =
+            //     Vector3{snake.position.x + fabs(camera->position.x - 15) * (camera->position.y - 20.0) / 50, 0.0,
+            //             snake.position.z + fabs(camera->position.z - 0.0) * (camera->position.y - 0) / 50};
+            // }
             if ((framesCounter % 15) == 0)
             {
 
-                snake.radius = snake.radius < 8 ? 8 : snake.radius * 0.99;
+                snake.radius = snake.radius < 0.5 ? 0.5 : snake.radius * 0.99;
                 for (int i = 0; i < dripNums; i++)
                 {
                     fruit[i].radius *= 0.98;
@@ -44,14 +99,6 @@ void Game::UpdateGame(void)
                 }
             }
 
-            //Wall behaviour
-            if (((snake.position.x) > (screenWidth - offset.x)) ||
-                ((snake.position.y) > (screenHeight - offset.y)) ||
-                (snake.position.x < 0) || (snake.position.y < 0))
-            {
-                gameOver = true;
-            }
-
             /*             //Collision with yourself
             for (int i = 1; i < counterTail; i++)
             {
@@ -61,7 +108,7 @@ void Game::UpdateGame(void)
             } */
             for (int i = 0; i < dripNums + buffNums; i++) //玩家水滴碰撞检测
             {
-                if (fruit[i].active && CheckCollisionCircles(fruit[i].position, fruit[i].radius, snake.position, snake.radius))
+                if (fruit[i].active && CheckCollisionCircles(fruit[i].position, fruit[i].radius, Vector2{snake.position.x, snake.position.y}, snake.radius))
                 {
                     if (snake.radius > fruit[i].radius)
                     {
@@ -78,7 +125,7 @@ void Game::UpdateGame(void)
                     //snake[counterTail].position = snakePosition[counterTail - 1];
                     //counterTail += 1;
                 }
-                if (buff[i].active && CheckCollisionCircleRec(snake.position, snake.radius, buff[i].rec))
+                if (buff[i].active && CheckCollisionCircleRec(Vector2{snake.position.x, snake.position.y}, snake.radius, buff[i].rec))
                 {
                     snake.buff = buff[i].species;
                     buff[i].active = false;
@@ -165,8 +212,6 @@ void Game::UpdateGame(void)
                     buff[j].active = false;
                 }
             }
-
-            
         }
         framesCounter++;
     }
@@ -179,5 +224,5 @@ void Game::UpdateGame(void)
             gameOver = false;
         }
     }
-    camera.fovy = 45.0f - (framesCounter * 0.05f);
+    //camera.fovy = 45.0f - (framesCounter * 0.05f);
 }

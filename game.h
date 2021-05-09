@@ -12,11 +12,12 @@
 #define SQUARE_SIZE     31
 enum Obstacle{Normal,Dirt,Insect};
 typedef struct Snake {//
-    Vector2 position;
+    Vector3 position;
     Vector2 size;
     Vector2 speed;
     Color color;
     Obstacle buff;
+    int buffTime;
     float radius;
 } Snake;
 
@@ -50,12 +51,12 @@ public:
     Food fruit[DRIP_MAX_NUMS];
     Buff buff[BUFF_MAX_NUMS];
     Snake snake;
-    Vector2 snakePosition;
+    Vector3 snakePosition;
     bool allowMove;
     Vector2 offset;
     int counterTail;
 
-    Camera camera;
+    Camera *camera=new Camera();
 
     Game();
     ~Game();

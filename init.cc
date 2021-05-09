@@ -27,14 +27,14 @@ void Game::InitGame(void)
     offset.x = screenWidth % SQUARE_SIZE;
     offset.y = screenHeight % SQUARE_SIZE;
 
-    snake.position = (Vector2){offset.x / 2, offset.y / 2};
+    snake.position = Vector3{0, 0,0};
     snake.size = (Vector2){SQUARE_SIZE, SQUARE_SIZE};
-    snake.radius = 10.0f;
+    snake.radius = 2;
     snake.speed = (Vector2){SQUARE_SIZE, 0};
     snake.buff=Normal;
     snake.color = DARKBLUE;
 
-    snakePosition = (Vector2){0.0f, 0.0f};
+    snakePosition = (Vector3){0.0f, 0.0f,0.0f};
 
     for (int i = 0; i < DRIP_MAX_NUMS; i++)
     {
@@ -52,10 +52,15 @@ void Game::InitGame(void)
         buff[i].active = false;
         buff[i].radius = 10.0f;
     }
-
-    camera.position = (Vector3){0.0f, 10.0f, 10.0f};
-    camera.target = (Vector3){1.0f, 0.0f, 0.0f};
-    camera.up = (Vector3){0.0f, 1.0f, 0.0f};
-    camera.fovy = 45.0f;
-    camera.projection = CAMERA_PERSPECTIVE;
+    camera->position = (Vector3){ 0.0f, 20.0f, 0.0f };
+    camera->target = (Vector3){ 0.0f, 0.0f, 0.0f };
+    camera->up = (Vector3){ -1.0f, 0.0f, 0.0f };
+    camera->fovy = 45.0f;
+    camera->projection = CAMERA_PERSPECTIVE;
+    SetCameraMode(*camera, CAMERA_FREE);
+    // camera.position = (Vector3){0.0f, 10.0f, 10.0f};
+    // camera.target = (Vector3){1.0f, 0.0f, 0.0f};
+    // camera.up = (Vector3){0.0f, 1.0f, 0.0f};
+    // camera.fovy = 45.0f;
+    // camera.projection = CAMERA_PERSPECTIVE;
 }

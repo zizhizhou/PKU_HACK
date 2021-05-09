@@ -5,6 +5,7 @@ main(void)
 {
     Game *g = new Game();
     InitWindow(g->screenWidth, g->screenHeight, "sample game: snake");
+    //SetWindowSize(1200,900);
     g->InitGame();
 
 #if defined(PLATFORM_WEB)
