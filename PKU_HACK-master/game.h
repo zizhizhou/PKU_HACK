@@ -67,10 +67,8 @@ public:
     int rainTime;//雨声时间
     int sunTime;//晴天声时间
     int bgmTime;//背景音乐时间
-    int PlaySoundContinus(char* filename, int playtime);//连续播放，如天气效果，仅在render中该天气部分添加
+    int PlaySoundContinus(char* filename, int playtime, int totaltime);//连续播放，如天气效果，仅在render中该天气部分添加
                                                         //playtime = PlaySoundContinus(char* filename, int playtime)
-    int PlayBGM(char* filename, int playtime);//背景音乐播放，在init和render中添加
-                                              //playtime = PlayBGM(char* filename, int playtime)
     void PlaySoundInstant(char* filename);//即时播放，在update中触发时添加
     GameResource(){
         windTime = 0;

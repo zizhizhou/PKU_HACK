@@ -19,7 +19,7 @@ void Game::InitGame(void)
     offset = {0};
     counterTail = 0;
     //初始化播放背景音乐
-    resource.bgmTime = resource.PlayBGM(resource.bgmMusic, resource.bgmTime);        
+    resource.bgmTime = resource.PlaySoundContinus(resource.bgmMusic, resource.bgmTime, 18300);        
 
     for (int i = 0;i < 10;i++)
     {

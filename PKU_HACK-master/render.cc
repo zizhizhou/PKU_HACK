@@ -1,17 +1,8 @@
 #include "game.h"
 //音效播放
-int GameResource::PlaySoundContinus(char *filename, int playtime)
+int GameResource::PlaySoundContinus(char *filename, int playtime, int totaltime)
 {
-    if ((playtime%150) == 0){
-        Sound s = LoadSound(filename);
-        PlaySound(s);
-    }
-    playtime++;
-    return playtime;    
-}
-int GameResource::PlayBGM(char *filename, int playtime)
-{
-    if ((playtime%18300) == 0){
+    if ((playtime%totaltime) == 0){
         Sound s = LoadSound(filename);
         PlaySound(s);
     }
@@ -32,7 +23,7 @@ void Game::DrawGame(void)
 
     if (!gameOver)
     {
-        resource.bgmTime = resource.PlayBGM(resource.bgmMusic, resource.bgmTime);//游戏未停止播放背景音乐        
+        resource.bgmTime = resource.PlaySoundContinus(resource.bgmMusic, resource.bgmTime, 18300);//游戏未停止播放背景音乐        
         //Draw grid lines
         for (int i = 0; i < screenWidth/SQUARE_SIZE + 1; i++)
         {
@@ -59,18 +50,18 @@ void Game::DrawGame(void)
         {   const char wind_message[128] = "Wind is coming!";
             DrawText(wind_message, 500, 10, 40, DARKBLUE);
             //播放风声
-            resource.windTime = resource.PlaySoundContinus(resource.windSound, resource.windTime);          
+            resource.windTime = resource.PlaySoundContinus(resource.windSound, resource.windTime, 150);          
         }
         if (Weather[1].active && Event_active)
         {
             const char sunny_message[128] = "What a sunny day!";
             DrawText(sunny_message, 400, 10, 40, RED);
             //播放晴朗音效
-            resource.sunTime = resource.PlaySoundContinus(resource.sunSound, resource.sunTime);
+            resource.sunTime = resource.PlaySoundContinus(resource.sunSound, resource.sunTime, 150);
         }
         //默认其他时刻为雨天播放雨天音效
         if (!Event_active)
-            resource.rainTime = resource.PlaySoundContinus(resource.rainSound,resource.rainTime);
+            resource.rainTime = resource.PlaySoundContinus(resource.rainSound,resource.rainTime, 150);
         //Draw snake
 
             DrawCircleV(snake.position, snake.radius, snake.color);
