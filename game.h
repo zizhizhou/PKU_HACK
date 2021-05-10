@@ -152,7 +152,7 @@ public:
 
     Drip drip;
 
-    Color rain_color = GOLD;
+    Color rain_color = GRAY;
     
     Camera2D camera;
 
