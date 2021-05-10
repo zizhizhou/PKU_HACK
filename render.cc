@@ -41,6 +41,18 @@ void GameResource::DrawBackground(Texture2D texture, Rectangle target, int state
     
 }
 
+bool Game::StartMenu(){
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    DrawRectangleGradientH(0,0,screenWidth,screenHeight,DARKBLUE,RAYWHITE);
+    DrawText("GAME NAME", 150, 150, 100, ORANGE);
+    DrawText("PRESS [ENTER] TO PLAY", 380, 380, 40, DARKGREEN);
+    DrawText("PRESS [ESC] TO EXIT", 580, 580, 40, RED);
+    EndDrawing();
+    if(IsKeyPressed(KEY_ENTER))
+        return true;
+    else return false;
+}
 
 //Draw game per frame...
 void Game::DrawGame(void)
@@ -105,16 +117,17 @@ void Game::drawdrop(){
 
         this->calcedge(rain[i].position,rain[i].radius,rain[i].speed);
         
-        DrawCircleV(rain[i].position,rain[i].radius,(Color){230,41,55,100});
+
+        DrawCircleV(rain[i].position,rain[i].radius,(Color){130,130,130,100});
         if(FILLING){
             if(keypoint!=-1){
                 if(keypoint==0){
                     DrawTriangle(edges[0],edges[1],edges[EDGECOUNT-1],WHITE);
-                    DrawTriangle(edges[0],edges[1],edges[EDGECOUNT-1],(Color){230,41,55,100});
+                    DrawTriangle(edges[0],edges[1],edges[EDGECOUNT-1],(Color){130,130,130,100});
                 }
                 else{
                     DrawTriangle(edges[keypoint],edges[keypoint+1],edges[keypoint-1],WHITE);
-                    DrawTriangle(edges[keypoint],edges[keypoint+1],edges[keypoint-1],(Color){230,41,55,100});
+                    DrawTriangle(edges[keypoint],edges[keypoint+1],edges[keypoint-1],(Color){130,130,130,100});
                 } 
             }
         }
